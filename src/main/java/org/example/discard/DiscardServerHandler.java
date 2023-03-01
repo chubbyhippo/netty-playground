@@ -3,12 +3,16 @@ package org.example.discard;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
+import io.netty.util.CharsetUtil;
 
 public class DiscardServerHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) {
-        ((ByteBuf) msg).release();
+
+        var in = (ByteBuf) msg;
+        System.out.println(in.toString(CharsetUtil.US_ASCII));
+        ctx.writeAndFlush(msg);
     }
 
     @Override
