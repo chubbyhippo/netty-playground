@@ -16,10 +16,10 @@ public class DiscardServer {
     }
 
     public void run() throws InterruptedException {
-        var bossEventLoopGroup = new NioEventLoopGroup();
-        var workerEventLoopGroup = new NioEventLoopGroup();
-
-        try {
+        try (
+                var bossEventLoopGroup = new NioEventLoopGroup();
+                var workerEventLoopGroup = new NioEventLoopGroup()
+        ) {
             var serverBootstrap = new ServerBootstrap();
             serverBootstrap
                     .group(bossEventLoopGroup, workerEventLoopGroup)
@@ -38,15 +38,13 @@ public class DiscardServer {
             var channelFuture = serverBootstrap.bind(port).sync();
 
             channelFuture.channel().closeFuture().sync();
-        } finally {
-            workerEventLoopGroup.shutdownGracefully();
-            bossEventLoopGroup.shutdownGracefully();
         }
+
     }
 
     public static void main(String[] args) throws InterruptedException {
         var port = 8080;
-        if (args.length>0) {
+        if (args.length > 0) {
             port = Integer.parseInt(args[0]);
         }
 
